@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:16
+    container_name: buildflow_postgres
+
+    restart: always
+    environment:
+      POSTGRES_USER: buildflow
+      POSTGRES_PASSWORD: buildflow
+      POSTGRES_DB: buildflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
