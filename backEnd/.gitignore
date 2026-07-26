@@ -1,0 +1,22 @@
+# dependencies
+/node_modules
+
+# build
+/dist
+
+# coverage
+/coverage
+
+# environment
+.env
+
+# logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+
