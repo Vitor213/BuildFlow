@@ -5,45 +5,52 @@ import { UpdateStockDto } from './dto/update-stock.dto';
 
 @Injectable()
 export class StockService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async create(createStockDto: CreateStockDto) {
-    return this.prisma.stock.create({
+  create(dto: CreateStockDto) {
+    return this.prisma.stockMovement.create({
       data: {
-        productId: createStockDto.productId,
-        quantity: createStockDto.quantity,
-        type: createStockDto.type,
-      },
-    });
-  }
-
-  async findAll() {
-    return this.prisma.stock.findMany({
-      include: {
-        product: true,
+        productId: dto.productId,
+        quantity: dto.quantity,
+        type: dto.type,
       },
     });
   }
 
   async findOne(id: number) {
-    return this.prisma.stock.findUnique({
+    const movement = await this.prisma.stockMovement.findUnique({
       where: { id },
       include: {
         product: true,
       },
     });
-  }
 
+    return movement;
+  }
+  findAll() {
+    return this.prisma.stockMovement.findMany({
+      include: {
+        product: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
   async update(id: number, updateStockDto: UpdateStockDto) {
-    return this.prisma.stock.update({
+    const movement = await this.prisma.stockMovement.update({
       where: { id },
       data: updateStockDto,
     });
+
+    return movement;
   }
 
   async remove(id: number) {
-    return this.prisma.stock.delete({
+    const movement = await this.prisma.stockMovement.delete({
       where: { id },
     });
+
+    return movement;
   }
 }

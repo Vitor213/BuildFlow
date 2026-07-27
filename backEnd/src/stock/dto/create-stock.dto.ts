@@ -1,9 +1,4 @@
-import {
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 
 export enum StockType {
   ENTRY = 'ENTRY',
@@ -11,7 +6,6 @@ export enum StockType {
 }
 
 export class CreateStockDto {
-
   @IsInt()
   productId!: number;
 
