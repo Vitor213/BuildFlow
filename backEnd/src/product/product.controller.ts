@@ -1,32 +1,58 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { QueryProductDto } from './dto/query-product.dto';
-import { UseInterceptors, UploadedFile } from '@nestjs/common';
 
-import { FileInterceptor } from '@nestjs/platform-express';
-
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+@ApiTags('Product')
 @Controller('product')
 export class ProductController {
-  prisma: any;
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
-  }
-  @Post('upload')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        name: {
+          type: 'string',
+        },
+        description: {
+          type: 'string',
+        },
+        price: {
+          type: 'number',
+        },
+        quantity: {
+          type: 'integer',
+        },
+        categoryId: {
+          type: 'integer',
+        },
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -39,26 +65,18 @@ export class ProductController {
       }),
     }),
   )
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
-    return {
-      imageUrl: `/uploads/${file.filename}`,
-    };
+  create(
+    @Body() dto: CreateProductDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    const imageUrl = file ? `/uploads/${file.filename}` : undefined;
+
+    return this.productService.create(dto, imageUrl);
   }
 
   @Get()
-  findAll(query: QueryProductDto) {
-    const { page, limit } = query;
-
-    return this.prisma.product.findMany({
-      skip: (page - 1) * limit,
-      take: limit,
-      include: {
-        category: true,
-      },
-      orderBy: {
-        id: 'asc',
-      },
-    });
+  findAll(@Query() query: QueryProductDto) {
+    return this.productService.findAll(query);
   }
 
   @Get(':id')
@@ -67,8 +85,13 @@ export class ProductController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+  update(@Param('id') id: string, @Body() dto: UpdateProductDto) {
+    return this.productService.update(+id, dto);
+  }
+
+  @Patch(':id/restore')
+  restore(@Param('id') id: string) {
+    return this.productService.restore(+id);
   }
 
   @Delete(':id')

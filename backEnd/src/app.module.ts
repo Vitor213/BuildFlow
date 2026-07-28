@@ -12,6 +12,7 @@ import { CustomerModule } from './customer/customer.module';
 import { SaleModule } from './sale/sale.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ConfigModule } from '@nestjs/config';
+import { AuditModule } from './audit/audit.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ConfigModule } from '@nestjs/config';
     CustomerModule,
     SaleModule,
     DashboardModule,
+    AuditModule,
   ],
   controllers: [AppController],
   providers: [AppService],
