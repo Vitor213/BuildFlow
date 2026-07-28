@@ -11,9 +11,24 @@ import { PurchaseModule } from './purchase/purchase.module';
 import { CustomerModule } from './customer/customer.module';
 import { SaleModule } from './sale/sale.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [PrismaModule, AuthModule, CategoryModule, ProductModule, StockModule, SupplierModule, PurchaseModule, CustomerModule, SaleModule, DashboardModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    PrismaModule,
+    AuthModule,
+    CategoryModule,
+    ProductModule,
+    StockModule,
+    SupplierModule,
+    PurchaseModule,
+    CustomerModule,
+    SaleModule,
+    DashboardModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
