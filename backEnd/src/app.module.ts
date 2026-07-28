@@ -10,9 +10,10 @@ import { SupplierModule } from './supplier/supplier.module';
 import { PurchaseModule } from './purchase/purchase.module';
 import { CustomerModule } from './customer/customer.module';
 import { SaleModule } from './sale/sale.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, CategoryModule, ProductModule, StockModule, SupplierModule, PurchaseModule, CustomerModule, SaleModule],
+  imports: [PrismaModule, AuthModule, CategoryModule, ProductModule, StockModule, SupplierModule, PurchaseModule, CustomerModule, SaleModule, DashboardModule],
   controllers: [AppController],
   providers: [AppService],
 })

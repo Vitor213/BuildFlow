@@ -14,7 +14,7 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  role      Role     @default(USER)
+  role Role @default(SELLER)
 }
 
 model Category {
@@ -48,8 +48,9 @@ model Product {
 }
 
 enum Role {
-  USER
   ADMIN
+  STOCK
+  SELLER
 }
 
 model StockMovement {

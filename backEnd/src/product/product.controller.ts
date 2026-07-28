@@ -2,9 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-
+import {QueryProductDto} from './dto/query-product.dto'
 @Controller('product')
 export class ProductController {
+  prisma: any;
   constructor(private readonly productService: ProductService) {}
 
   @Post()
@@ -13,9 +14,20 @@ export class ProductController {
   }
 
   @Get()
-  findAll() {
-    return this.productService.findAll();
-  }
+  findAll(query: QueryProductDto) {
+  const { page, limit } = query;
+
+  return this.prisma.product.findMany({
+    skip: (page - 1) * limit,
+    take: limit,
+    include: {
+      category: true,
+    },
+    orderBy: {
+      id: 'asc',
+    },
+  });
+}
 
   @Get(':id')
   findOne(@Param('id') id: string) {
