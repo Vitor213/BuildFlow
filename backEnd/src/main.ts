@@ -26,6 +26,7 @@ async function bootstrap() {
     prefix: '/uploads/',
   });
 
-  await app.listen(3000);
+  const port = Number(process.env.PORT ?? 3002);
+  await app.listen(port);
 }
 bootstrap();

@@ -8,6 +8,7 @@ export class DashboardService {
   async getDashboard() {
     const [
       products,
+      categories,
       customers,
       suppliers,
       sales,
@@ -16,6 +17,8 @@ export class DashboardService {
       outOfStock,
     ] = await Promise.all([
       this.prisma.product.count(),
+
+      this.prisma.category.count(),
 
       this.prisma.customer.count(),
 
@@ -50,6 +53,7 @@ export class DashboardService {
 
     return {
       products,
+      categories,
       customers,
       suppliers,
       totalSales: sales._sum.total ?? 0,
