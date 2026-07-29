@@ -71,7 +71,7 @@ export class AuthService {
       role: user.role,
     });
     return {
-      acesses_token: token,
+      access_token: token,
     };
   }
 }
