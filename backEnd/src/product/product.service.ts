@@ -45,7 +45,10 @@ export class ProductService {
   }
 
   findAll(query: QueryProductDto) {
-    const { page, limit, search, categoryId, minPrice, maxPrice } = query;
+    const page = query.page ? Number(query.page) : 1;
+    const limit = query.limit ? Number(query.limit) : 10;
+
+    const { search, categoryId, minPrice, maxPrice } = query;
 
     return this.prisma.product.findMany({
       skip: (page - 1) * limit,

@@ -13,10 +13,14 @@ export interface DashboardData {
 
 export async function getDashboard() {
   try {
-    const { data } = await api.get<DashboardData>("/dashboard");
-    return data;
+    const response = await api.get("/dashboard");
+
+    console.log("STATUS:", response.status);
+    console.log("DATA:", response.data);
+
+    return response.data;
   } catch (error) {
-    console.error(error);
+    console.error("ERRO AXIOS:", error);
     throw error;
   }
 }
