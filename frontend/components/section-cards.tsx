@@ -8,7 +8,7 @@ import {
   Users,
   Truck,
   DollarSign,
-  PackageX,
+  ShoppingCart,
 } from "lucide-react";
 
 import { DashboardData } from "@/lib/services/dashboard.service";
@@ -39,16 +39,20 @@ const cards = (dashboard: DashboardData) => [
     icon: Truck,
   },
   {
-    title: "Total de Vendas",
-    value: `R$ ${dashboard.totalSales.toLocaleString("pt-BR", {
-      minimumFractionDigits: 2,
-    })}`,
+    title: "Vendas",
+    value: dashboard.totalSales.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }),
     icon: DollarSign,
   },
   {
-    title: "Estoque Baixo",
-    value: dashboard.lowStock,
-    icon: PackageX,
+    title: "Compras",
+    value: dashboard.totalPurchases.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }),
+    icon: ShoppingCart,
   },
 ];
 
@@ -60,8 +64,8 @@ export function SectionCards({ dashboard }: Props) {
 
         return (
           <Card key={card.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm text-muted-foreground">
                 {card.title}
               </CardTitle>
 
@@ -69,7 +73,7 @@ export function SectionCards({ dashboard }: Props) {
             </CardHeader>
 
             <CardContent>
-              <p className="text-3xl font-bold">{card.value}</p>
+              <div className="text-3xl font-bold">{card.value}</div>
             </CardContent>
           </Card>
         );

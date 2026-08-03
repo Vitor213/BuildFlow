@@ -37,6 +37,26 @@ export class StockService {
       },
     });
   }
+  async getInventory() {
+    return this.prisma.product.findMany({
+      where: {
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        name: true,
+        quantity: true,
+        category: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        name: 'asc',
+      },
+    });
+  }
   async update(id: number, updateStockDto: UpdateStockDto) {
     const movement = await this.prisma.stockMovement.update({
       where: { id },

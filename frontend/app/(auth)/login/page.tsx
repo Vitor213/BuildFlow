@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { useForm } from "react-hook-form";
@@ -25,6 +25,14 @@ export default function LoginPage() {
 
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      router.replace("/dashboard");
+    }
+  }, [router]);
+
   const {
     register,
     handleSubmit,
@@ -39,15 +47,12 @@ export default function LoginPage() {
 
       const response = await login(data);
 
-      localStorage.setItem(
-        "token",
-        response.access_token
-      );
+      localStorage.setItem("token", response.access_token);
 
-      router.push("/dashboard");
+      router.replace("/dashboard");
     } catch (error) {
-      alert("E-mail ou senha inválidos.");
       console.error(error);
+      alert("E-mail ou senha inválidos.");
     } finally {
       setLoading(false);
     }
@@ -57,9 +62,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-100">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader>
-          <CardTitle className="text-center text-3xl">
-            BuildFlow
-          </CardTitle>
+          <CardTitle className="text-center text-3xl">BuildFlow</CardTitle>
 
           <p className="text-center text-muted-foreground">
             Faça login para continuar
@@ -67,15 +70,9 @@ export default function LoginPage() {
         </CardHeader>
 
         <CardContent>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-5"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
-              <Input
-                placeholder="E-mail"
-                {...register("email")}
-              />
+              <Input placeholder="E-mail" {...register("email")} />
 
               {errors.email && (
                 <p className="mt-1 text-sm text-red-500">
@@ -98,11 +95,7 @@ export default function LoginPage() {
               )}
             </div>
 
-            <Button
-              className="w-full"
-              disabled={loading}
-              type="submit"
-            >
+            <Button className="w-full" disabled={loading} type="submit">
               {loading ? "Entrando..." : "Entrar"}
             </Button>
           </form>

@@ -11,10 +11,13 @@ export class DashboardService {
       categories,
       customers,
       suppliers,
+
       sales,
       purchases,
+
       lowStock,
-      outOfStock,
+      recentSales,
+      recentPurchases,
     ] = await Promise.all([
       this.prisma.product.count(),
 
@@ -36,18 +39,41 @@ export class DashboardService {
         },
       }),
 
-      this.prisma.product.count({
+      this.prisma.product.findMany({
         where: {
           quantity: {
             lte: 5,
           },
         },
+        select: {
+          id: true,
+          name: true,
+          quantity: true,
+        },
+        orderBy: {
+          quantity: 'asc',
+        },
+        take: 5,
       }),
 
-      this.prisma.product.count({
-        where: {
-          quantity: 0,
+      this.prisma.sale.findMany({
+        include: {
+          customer: true,
         },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: 5,
+      }),
+
+      this.prisma.purchase.findMany({
+        include: {
+          supplier: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: 5,
       }),
     ]);
 
@@ -56,10 +82,16 @@ export class DashboardService {
       categories,
       customers,
       suppliers,
-      totalSales: sales._sum.total ?? 0,
-      totalPurchases: purchases._sum.total ?? 0,
+
+      totalSales: Number(sales._sum.total ?? 0),
+
+      totalPurchases: Number(purchases._sum.total ?? 0),
+
       lowStock,
-      outOfStock,
+
+      recentSales,
+
+      recentPurchases,
     };
   }
 }

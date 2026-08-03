@@ -5,22 +5,38 @@ export interface DashboardData {
   categories: number;
   customers: number;
   suppliers: number;
+
   totalSales: number;
   totalPurchases: number;
-  lowStock: number;
-  outOfStock: number;
+
+  lowStock: {
+    id: number;
+    name: string;
+    quantity: number;
+  }[];
+
+  recentSales: {
+    id: number;
+    total: number;
+    createdAt: string;
+
+    customer: {
+      name: string;
+    };
+  }[];
+
+  recentPurchases: {
+    id: number;
+    total: number;
+    createdAt: string;
+
+    supplier: {
+      name: string;
+    };
+  }[];
 }
 
-export async function getDashboard() {
-  try {
-    const response = await api.get("/dashboard");
-
-    console.log("STATUS:", response.status);
-    console.log("DATA:", response.data);
-
-    return response.data;
-  } catch (error) {
-    console.error("ERRO AXIOS:", error);
-    throw error;
-  }
+export async function getDashboard(): Promise<DashboardData> {
+  const { data } = await api.get<DashboardData>("/dashboard");
+  return data;
 }

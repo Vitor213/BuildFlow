@@ -18,6 +18,7 @@ import {
 
 import {
   BadgeDollarSignIcon,
+  Boxes,
   CircleHelpIcon,
   FolderTreeIcon,
   LayoutDashboardIcon,
@@ -91,12 +92,15 @@ const data = {
       url: "#",
       icon: <LogOutIcon />,
     },
+    {
+      title: "Estoque",
+      url: "/stock",
+      icon: <Boxes />,
+    },
   ],
 };
 
-export function AppSidebar({
-  ...props
-}: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -107,9 +111,7 @@ export function AppSidebar({
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
               <Package2 className="size-5" />
-              <span className="text-base font-semibold">
-                BuildFlow
-              </span>
+              <span className="text-base font-semibold">BuildFlow</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -117,10 +119,7 @@ export function AppSidebar({
 
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavSecondary
-          items={data.navSecondary}
-          className="mt-auto"
-        />
+        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
 
       <SidebarFooter>
