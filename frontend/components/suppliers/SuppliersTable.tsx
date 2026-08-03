@@ -1,6 +1,6 @@
 "use client";
 
-import { Product } from "@/lib/services/product.service";
+import { Supplier } from "@/lib/services/supplier.service";
 import { Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -14,23 +14,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-interface ProductsTableProps {
-  products: Product[];
+interface SuppliersTableProps {
+  suppliers: Supplier[];
   loading: boolean;
+  onEdit: (supplier: Supplier) => void;
   onDelete: (id: number) => void;
-  onEdit: (product: Product) => void;
 }
 
-export function ProductsTable({
-  products,
+export function SuppliersTable({
+  suppliers,
   loading,
-  onDelete,
   onEdit,
-}: ProductsTableProps) {
+  onDelete,
+}: SuppliersTableProps) {
   if (loading) {
     return (
       <div className="rounded-lg border p-6 text-center">
-        Carregando produtos...
+        Carregando fornecedores...
       </div>
     );
   }
@@ -41,46 +41,36 @@ export function ProductsTable({
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
-            <TableHead>Produto</TableHead>
-            <TableHead>Categoria</TableHead>
-            <TableHead>Qtd.</TableHead>
-            <TableHead>Preço</TableHead>
+            <TableHead>Nome</TableHead>
+            <TableHead>E-mail</TableHead>
+            <TableHead>Telefone</TableHead>
+            <TableHead>CNPJ</TableHead>
             <TableHead className="w-32 text-center">Ações</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
-          {products.length === 0 ? (
+          {suppliers.length === 0 ? (
             <TableRow>
               <TableCell colSpan={6} className="text-center">
-                Nenhum produto encontrado.
+                Nenhum fornecedor encontrado.
               </TableCell>
             </TableRow>
           ) : (
-            products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>{product.id}</TableCell>
-
-                <TableCell>{product.name}</TableCell>
-
-                <TableCell>{product.category.name}</TableCell>
-
-                <TableCell>{product.quantity}</TableCell>
-
-                <TableCell>
-                  {Number(product.price).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
-                </TableCell>
+            suppliers.map((supplier) => (
+              <TableRow key={supplier.id}>
+                <TableCell>{supplier.id}</TableCell>
+                <TableCell>{supplier.name}</TableCell>
+                <TableCell>{supplier.email || "-"}</TableCell>
+                <TableCell>{supplier.phone || "-"}</TableCell>
+                <TableCell>{supplier.cnpj || "-"}</TableCell>
 
                 <TableCell className="text-center">
                   <div className="flex justify-center gap-2">
                     <Button
                       variant="ghost"
                       size="icon"
-                      title="Editar"
-                      onClick={() => onEdit(product)}
+                      onClick={() => onEdit(supplier)}
                     >
                       <Pencil className="h-4 w-4" />
                     </Button>
@@ -88,8 +78,7 @@ export function ProductsTable({
                     <Button
                       variant="ghost"
                       size="icon"
-                      title="Excluir"
-                      onClick={() => onDelete(product.id)}
+                      onClick={() => onDelete(supplier.id)}
                     >
                       <Trash2 className="h-4 w-4 text-red-500" />
                     </Button>

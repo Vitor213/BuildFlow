@@ -1,92 +1,100 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 
-import { createProduct } from "@/lib/services/product.service";
+import {
+  Product,
+  createProduct,
+  updateProduct,
+  type CreateProductDto,
+} from "@/lib/services/product.service";
+
 import { getCategories, type Category } from "@/lib/services/category.service";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface ProductFormProps {
+  product?: Product | null;
   onSuccess: () => void;
 }
 
-export function ProductForm({ onSuccess }: ProductFormProps) {
+export function ProductForm({ product, onSuccess }: ProductFormProps) {
   const [categories, setCategories] = useState<Category[]>([]);
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [categoryId, setCategoryId] = useState("");
+  const defaultValues = useMemo<CreateProductDto>(
+    () => ({
+      name: product?.name ?? "",
+      description: product?.description ?? "",
+      price: product?.price ?? 0,
+      quantity: product?.quantity ?? 0,
+      categoryId: product?.category.id ?? 0,
+    }),
+    [product],
+  );
+
+  const { register, handleSubmit, reset } = useForm<CreateProductDto>({
+    defaultValues,
+  });
 
   useEffect(() => {
     getCategories().then(setCategories).catch(console.error);
   }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  useEffect(() => {
+    reset(defaultValues);
+  }, [defaultValues, reset]);
 
+  async function onSubmit(data: CreateProductDto) {
     try {
-      await createProduct({
-        name,
-        description,
-        price: Number(price),
-        quantity: Number(quantity),
-        categoryId: Number(categoryId),
+      if (product) {
+        await updateProduct(product.id, data);
+      } else {
+        await createProduct(data);
+      }
+
+      reset({
+        name: "",
+        description: "",
+        price: 0,
+        quantity: 0,
+        categoryId: 0,
       });
 
       onSuccess();
-
-      setName("");
-      setDescription("");
-      setPrice("");
-      setQuantity("");
-      setCategoryId("");
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao cadastrar produto.");
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao salvar produto.");
     }
   }
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       className="grid gap-4 rounded-lg border p-6 md:grid-cols-2"
     >
-      <Input
-        placeholder="Nome"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+      <Input placeholder="Nome" {...register("name", { required: true })} />
 
-      <Input
-        placeholder="Descrição"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
+      <Input placeholder="Descrição" {...register("description")} />
 
       <Input
         type="number"
         placeholder="Preço"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
+        {...register("price", { valueAsNumber: true })}
       />
 
       <Input
         type="number"
         placeholder="Quantidade"
-        value={quantity}
-        onChange={(e) => setQuantity(e.target.value)}
+        {...register("quantity", { valueAsNumber: true })}
       />
 
       <select
         className="rounded-md border p-2"
-        value={categoryId}
-        onChange={(e) => setCategoryId(e.target.value)}
+        {...register("categoryId", { valueAsNumber: true })}
       >
-        <option value="">Selecione uma categoria</option>
+        <option value={0}>Selecione uma categoria</option>
 
         {categories.map((category) => (
           <option key={category.id} value={category.id}>
@@ -95,7 +103,9 @@ export function ProductForm({ onSuccess }: ProductFormProps) {
         ))}
       </select>
 
-      <Button type="submit">Salvar Produto</Button>
+      <Button type="submit">
+        {product ? "Atualizar Produto" : "Salvar Produto"}
+      </Button>
     </form>
   );
 }

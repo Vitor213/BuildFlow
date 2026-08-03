@@ -168,3 +168,20 @@ model AuditLog {
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
+
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+  constructor() {
+    super({
+      jwtFrom: 'token',
+      secretOrKey: 'secret',
+    });
+  }
+
+  async validate(payload: { userId: string; role: string }) {
+    const user = await User.findOne({ id: payload.userId });
+    if (!user) {
+      throw new Error('Invalid token');
+    }
+    return user;
+  }
+}

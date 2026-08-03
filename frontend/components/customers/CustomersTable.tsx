@@ -1,6 +1,7 @@
 "use client";
 
-import { Product } from "@/lib/services/product.service";
+import { Customer } from "@/lib/services/customer.service";
+
 import { Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -14,23 +15,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-interface ProductsTableProps {
-  products: Product[];
+interface CustomersTableProps {
+  customers: Customer[];
   loading: boolean;
+  onEdit: (customer: Customer) => void;
   onDelete: (id: number) => void;
-  onEdit: (product: Product) => void;
 }
 
-export function ProductsTable({
-  products,
+export function CustomersTable({
+  customers,
   loading,
-  onDelete,
   onEdit,
-}: ProductsTableProps) {
+  onDelete,
+}: CustomersTableProps) {
   if (loading) {
     return (
       <div className="rounded-lg border p-6 text-center">
-        Carregando produtos...
+        Carregando clientes...
       </div>
     );
   }
@@ -41,38 +42,30 @@ export function ProductsTable({
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
-            <TableHead>Produto</TableHead>
-            <TableHead>Categoria</TableHead>
-            <TableHead>Qtd.</TableHead>
-            <TableHead>Preço</TableHead>
+            <TableHead>Nome</TableHead>
+            <TableHead>E-mail</TableHead>
+            <TableHead>Telefone</TableHead>
             <TableHead className="w-32 text-center">Ações</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
-          {products.length === 0 ? (
+          {customers.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center">
-                Nenhum produto encontrado.
+              <TableCell colSpan={5} className="text-center">
+                Nenhum cliente encontrado.
               </TableCell>
             </TableRow>
           ) : (
-            products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>{product.id}</TableCell>
+            customers.map((customer) => (
+              <TableRow key={customer.id}>
+                <TableCell>{customer.id}</TableCell>
 
-                <TableCell>{product.name}</TableCell>
+                <TableCell>{customer.name}</TableCell>
 
-                <TableCell>{product.category.name}</TableCell>
+                <TableCell>{customer.email || "-"}</TableCell>
 
-                <TableCell>{product.quantity}</TableCell>
-
-                <TableCell>
-                  {Number(product.price).toLocaleString("pt-BR", {
-                    style: "currency",
-                    currency: "BRL",
-                  })}
-                </TableCell>
+                <TableCell>{customer.phone || "-"}</TableCell>
 
                 <TableCell className="text-center">
                   <div className="flex justify-center gap-2">
@@ -80,7 +73,7 @@ export function ProductsTable({
                       variant="ghost"
                       size="icon"
                       title="Editar"
-                      onClick={() => onEdit(product)}
+                      onClick={() => onEdit(customer)}
                     >
                       <Pencil className="h-4 w-4" />
                     </Button>
@@ -89,7 +82,7 @@ export function ProductsTable({
                       variant="ghost"
                       size="icon"
                       title="Excluir"
-                      onClick={() => onDelete(product.id)}
+                      onClick={() => onDelete(customer.id)}
                     >
                       <Trash2 className="h-4 w-4 text-red-500" />
                     </Button>

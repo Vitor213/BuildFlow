@@ -20,7 +20,7 @@ export class AuthController {
   }
 
   @Get('profile')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   profile(@Req() req: { user: unknown }) {
     return req.user;
   }
