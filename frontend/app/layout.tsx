@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import Providers from "./providers";
+
 import { TooltipProvider } from "@/components/ui/tooltip";
+
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "BuildFlow",
@@ -18,7 +21,11 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body>
         <TooltipProvider>
-          <Providers>{children}</Providers>
+          <Providers>
+            {children}
+
+            <Toaster position="top-right" richColors closeButton />
+          </Providers>
         </TooltipProvider>
       </body>
     </html>

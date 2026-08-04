@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import {
   Product,
@@ -27,6 +28,7 @@ export default function ProductsPage() {
       setProducts(data);
     } catch (error) {
       console.error(error);
+      toast.error("Erro ao carregar produtos.");
     } finally {
       setLoading(false);
     }
@@ -39,10 +41,13 @@ export default function ProductsPage() {
 
     try {
       await deleteProduct(id);
+
+      toast.success("Produto excluído com sucesso!");
+
       await loadProducts();
     } catch (error) {
       console.error(error);
-      alert("Erro ao excluir produto.");
+      toast.error("Erro ao excluir produto.");
     }
   }
 

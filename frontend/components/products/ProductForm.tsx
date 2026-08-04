@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import {
   Product,
@@ -50,8 +51,12 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
     try {
       if (product) {
         await updateProduct(product.id, data);
+
+        toast.success("Produto atualizado com sucesso!");
       } else {
         await createProduct(data);
+
+        toast.success("Produto cadastrado com sucesso!");
       }
 
       reset({
@@ -65,7 +70,8 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
       onSuccess();
     } catch (error) {
       console.error(error);
-      alert("Erro ao salvar produto.");
+
+      toast.error("Erro ao salvar produto.");
     }
   }
 
@@ -81,18 +87,25 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
       <Input
         type="number"
         placeholder="Preço"
-        {...register("price", { valueAsNumber: true })}
+        {...register("price", {
+          valueAsNumber: true,
+        })}
       />
 
       <Input
         type="number"
         placeholder="Quantidade"
-        {...register("quantity", { valueAsNumber: true })}
+        min={0}
+        {...register("quantity", {
+          valueAsNumber: true,
+        })}
       />
 
       <select
         className="rounded-md border p-2"
-        {...register("categoryId", { valueAsNumber: true })}
+        {...register("categoryId", {
+          valueAsNumber: true,
+        })}
       >
         <option value={0}>Selecione uma categoria</option>
 
