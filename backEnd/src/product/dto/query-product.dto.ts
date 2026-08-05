@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import {
   IsBoolean,
   IsInt,
@@ -41,7 +41,11 @@ export class QueryProductDto {
   maxPrice?: number;
 
   @IsOptional()
-  @Type(() => Boolean)
+  @Transform(({ value }) => {
+    if (value === undefined || value === null) return undefined;
+    if (typeof value === 'boolean') return value;
+    return String(value) === 'true';
+  })
   @IsBoolean()
   showDeleted?: boolean;
 }

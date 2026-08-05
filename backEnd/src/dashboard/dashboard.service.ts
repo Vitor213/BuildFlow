@@ -19,7 +19,7 @@ export class DashboardService {
       recentSales,
       recentPurchases,
     ] = await Promise.all([
-      this.prisma.product.count(),
+      this.prisma.product.count({ where: { deletedAt: null } }),
 
       this.prisma.category.count(),
 
@@ -41,6 +41,7 @@ export class DashboardService {
 
       this.prisma.product.findMany({
         where: {
+          deletedAt: null,
           quantity: {
             lte: 5,
           },
