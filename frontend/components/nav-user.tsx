@@ -50,26 +50,28 @@ export function NavUser({ user }: NavUserProps) {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <SidebarMenuButton size="lg" className="aria-expanded:bg-muted">
-              <Avatar className="size-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
+          <DropdownMenuTrigger
+            render={
+              <SidebarMenuButton size="lg" className="aria-expanded:bg-muted" />
+            }
+          >
+            <Avatar className="size-8 rounded-lg">
+              <AvatarImage src={user.avatar} alt={user.name} />
 
-                <AvatarFallback className="rounded-lg">
-                  {(user.name?.charAt(0) ?? "U").toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
+              <AvatarFallback className="rounded-lg">
+                {(user.name?.charAt(0) ?? "U").toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
 
-              <div className="grid flex-1 text-left">
-                <span className="truncate font-medium">{user.name}</span>
+            <div className="grid flex-1 text-left">
+              <span className="truncate font-medium">{user.name}</span>
 
-                <span className="truncate text-xs text-muted-foreground">
-                  {user.email}
-                </span>
-              </div>
+              <span className="truncate text-xs text-muted-foreground">
+                {user.email}
+              </span>
+            </div>
 
-              <EllipsisVerticalIcon className="ml-auto h-4 w-4" />
-            </SidebarMenuButton>
+            <EllipsisVerticalIcon className="ml-auto h-4 w-4" />
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
@@ -81,6 +83,7 @@ export function NavUser({ user }: NavUserProps) {
             <DropdownMenuLabel>
               <div className="flex flex-col">
                 <span>{user.name}</span>
+
                 <span className="text-xs text-muted-foreground">
                   {user.email}
                 </span>
