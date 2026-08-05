@@ -10,6 +10,7 @@ import {
 
 import { CategoryForm } from "@/components/categories/CategoryForm";
 import { CategoriesTable } from "@/components/categories/CategoriesTable";
+import { toast } from "sonner";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -35,10 +36,14 @@ export default function CategoriesPage() {
 
     try {
       await deleteCategory(id);
+
+      toast.success("Categoria excluída com sucesso!");
+
       await loadCategories();
     } catch (error) {
       console.error(error);
-      alert("Erro ao excluir categoria.");
+
+      toast.error("Erro ao excluir categoria.");
     }
   }
 

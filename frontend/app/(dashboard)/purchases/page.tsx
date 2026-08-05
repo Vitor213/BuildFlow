@@ -10,6 +10,7 @@ import {
 
 import { PurchaseForm } from "@/components/purchases/PurchaseForm";
 import { PurchasesTable } from "@/components/purchases/PurchasesTable";
+import { toast } from "sonner";
 
 export default function PurchasesPage() {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
@@ -33,10 +34,14 @@ export default function PurchasesPage() {
 
     try {
       await deletePurchase(id);
+
+      toast.success("Compra excluída com sucesso!");
+
       await loadPurchases();
     } catch (error) {
       console.error(error);
-      alert("Erro ao excluir compra.");
+
+      toast.error("Erro ao excluir compra.");
     }
   }
 

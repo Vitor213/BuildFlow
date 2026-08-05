@@ -6,6 +6,7 @@ import { Sale, getSales, deleteSale } from "@/lib/services/sale.service";
 
 import { SaleForm } from "@/components/sales/SaleForm";
 import { SalesTable } from "@/components/sales/SalesTable";
+import { toast } from "sonner";
 
 export default function SalesPage() {
   const [sales, setSales] = useState<Sale[]>([]);
@@ -29,10 +30,14 @@ export default function SalesPage() {
 
     try {
       await deleteSale(id);
+
+      toast.success("Venda excluída com sucesso!");
+
       await loadSales();
     } catch (error) {
       console.error(error);
-      alert("Erro ao excluir venda.");
+
+      toast.error("Erro ao excluir venda.");
     }
   }
 

@@ -12,6 +12,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface CategoryFormProps {
   category?: Category | null;
@@ -35,8 +36,12 @@ export function CategoryForm({ category, onSuccess }: CategoryFormProps) {
     try {
       if (category) {
         await updateCategory(category.id, data);
+
+        toast.success("Categoria atualizada com sucesso!");
       } else {
         await createCategory(data);
+
+        toast.success("Categoria cadastrada com sucesso!");
       }
 
       reset({
@@ -46,7 +51,8 @@ export function CategoryForm({ category, onSuccess }: CategoryFormProps) {
       onSuccess();
     } catch (error) {
       console.error(error);
-      alert("Erro ao salvar categoria.");
+
+      toast.error("Erro ao salvar categoria.");
     }
   }
 

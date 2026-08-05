@@ -12,6 +12,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface CustomerFormProps {
   customer?: Customer | null;
@@ -39,8 +40,12 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
     try {
       if (customer) {
         await updateCustomer(customer.id, data);
+
+        toast.success("Cliente atualizado com sucesso!");
       } else {
         await createCustomer(data);
+
+        toast.success("Cliente cadastrado com sucesso!");
       }
 
       reset({
@@ -52,7 +57,8 @@ export function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
       onSuccess();
     } catch (error) {
       console.error(error);
-      alert("Erro ao salvar cliente.");
+
+      toast.error("Erro ao salvar cliente.");
     }
   }
 

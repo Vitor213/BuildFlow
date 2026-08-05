@@ -1,5 +1,5 @@
 "use client";
-
+import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -49,10 +49,13 @@ export default function LoginPage() {
 
       localStorage.setItem("token", response.access_token);
 
+      toast.success("Login realizado com sucesso!");
+
       router.replace("/dashboard");
     } catch (error) {
       console.error(error);
-      alert("E-mail ou senha inválidos.");
+
+      toast.error("E-mail ou senha inválidos.");
     } finally {
       setLoading(false);
     }

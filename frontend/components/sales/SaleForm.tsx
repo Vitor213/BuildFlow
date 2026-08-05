@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { getProducts, Product } from "@/lib/services/product.service";
 import { getCustomers, Customer } from "@/lib/services/customer.service";
-
 import { createSale, SaleItem } from "@/lib/services/sale.service";
 
 import { Button } from "@/components/ui/button";
@@ -68,11 +68,46 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    if (!customerId) {
+      toast.error("Selecione um cliente.");
+      return;
+    }
+
+    if (items.some((item) => item.productId === 0)) {
+      toast.error("Selecione um produto.");
+      return;
+    }
+
+    if (items.some((item) => item.quantity <= 0)) {
+      toast.error("A quantidade deve ser maior que zero.");
+      return;
+    }
+
+    if (items.some((item) => item.price < 0)) {
+      toast.error("O preço não pode ser negativo.");
+      return;
+    }
+
+    const stockError = items.find((item) => {
+      const product = products.find((p) => p.id === item.productId);
+
+      return product && item.quantity > product.quantity;
+    });
+
+    if (stockError) {
+      const product = products.find((p) => p.id === stockError.productId);
+
+      toast.error(`Estoque insuficiente para ${product?.name}.`);
+      return;
+    }
+
     try {
       await createSale({
         customerId: Number(customerId),
         items,
       });
+
+      toast.success("Venda cadastrada com sucesso!");
 
       setCustomerId("");
 
@@ -88,7 +123,7 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
     } catch (error: any) {
       console.error(error);
 
-      alert(error?.response?.data?.message ?? "Erro ao cadastrar venda.");
+      toast.error(error?.response?.data?.message ?? "Erro ao cadastrar venda.");
     }
   }
 
@@ -121,7 +156,7 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
         const selectedProduct = products.find((p) => p.id === item.productId);
 
         return (
-          <div key={index} className="grid grid-cols-6 gap-4 items-center">
+          <div key={index} className="grid grid-cols-6 items-center gap-4">
             <select
               className="rounded-md border p-2"
               value={item.productId}
@@ -158,6 +193,7 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
               type="number"
               min={1}
               max={selectedProduct?.quantity}
+              step="1"
               value={item.quantity}
               onChange={(e) =>
                 updateItem(

@@ -12,6 +12,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface SupplierFormProps {
   supplier?: Supplier | null;
@@ -41,8 +42,12 @@ export function SupplierForm({ supplier, onSuccess }: SupplierFormProps) {
     try {
       if (supplier) {
         await updateSupplier(supplier.id, data);
+
+        toast.success("Fornecedor atualizado com sucesso!");
       } else {
         await createSupplier(data);
+
+        toast.success("Fornecedor cadastrado com sucesso!");
       }
 
       reset({
@@ -55,7 +60,8 @@ export function SupplierForm({ supplier, onSuccess }: SupplierFormProps) {
       onSuccess();
     } catch (error) {
       console.error(error);
-      alert("Erro ao salvar fornecedor.");
+
+      toast.error("Erro ao salvar fornecedor.");
     }
   }
 

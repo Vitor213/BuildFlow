@@ -10,6 +10,7 @@ import {
 
 import { CustomerForm } from "@/components/customers/CustomerForm";
 import { CustomersTable } from "@/components/customers/CustomersTable";
+import { toast } from "sonner";
 
 export default function CustomersPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -35,10 +36,14 @@ export default function CustomersPage() {
 
     try {
       await deleteCustomer(id);
+
+      toast.success("Cliente excluído com sucesso!");
+
       await loadCustomers();
     } catch (error) {
       console.error(error);
-      alert("Erro ao excluir cliente.");
+
+      toast.error("Erro ao excluir cliente.");
     }
   }
 

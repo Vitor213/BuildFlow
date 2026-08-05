@@ -10,6 +10,7 @@ import {
 
 import { SupplierForm } from "@/components/suppliers/SupplierForm";
 import { SuppliersTable } from "@/components/suppliers/SuppliersTable";
+import { toast } from "sonner";
 
 export default function SuppliersPage() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
@@ -35,10 +36,14 @@ export default function SuppliersPage() {
 
     try {
       await deleteSupplier(id);
+
+      toast.success("Fornecedor excluído com sucesso!");
+
       await loadSuppliers();
     } catch (error) {
       console.error(error);
-      alert("Erro ao excluir fornecedor.");
+
+      toast.error("Erro ao excluir fornecedor.");
     }
   }
 

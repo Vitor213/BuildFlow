@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { getProducts, Product } from "@/lib/services/product.service";
 import { getSuppliers, Supplier } from "@/lib/services/supplier.service";
-
 import { createPurchase, PurchaseItem } from "@/lib/services/purchase.service";
 
 import { Button } from "@/components/ui/button";
@@ -68,11 +68,33 @@ export function PurchaseForm({ onSuccess }: PurchaseFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    if (!supplierId) {
+      toast.error("Selecione um fornecedor.");
+      return;
+    }
+
+    if (items.some((item) => item.productId === 0)) {
+      toast.error("Selecione um produto.");
+      return;
+    }
+
+    if (items.some((item) => item.quantity <= 0)) {
+      toast.error("A quantidade deve ser maior que zero.");
+      return;
+    }
+
+    if (items.some((item) => item.price < 0)) {
+      toast.error("O preço não pode ser negativo.");
+      return;
+    }
+
     try {
       await createPurchase({
         supplierId: Number(supplierId),
         items,
       });
+
+      toast.success("Compra cadastrada com sucesso!");
 
       setSupplierId("");
 
@@ -87,7 +109,7 @@ export function PurchaseForm({ onSuccess }: PurchaseFormProps) {
       onSuccess();
     } catch (error) {
       console.error(error);
-      alert("Erro ao cadastrar compra.");
+      toast.error("Erro ao cadastrar compra.");
     }
   }
 
@@ -116,7 +138,7 @@ export function PurchaseForm({ onSuccess }: PurchaseFormProps) {
       </div>
 
       {items.map((item, index) => (
-        <div key={index} className="grid grid-cols-5 gap-4 items-center">
+        <div key={index} className="grid grid-cols-5 items-center gap-4">
           <select
             className="rounded-md border p-2"
             value={item.productId}
@@ -148,6 +170,7 @@ export function PurchaseForm({ onSuccess }: PurchaseFormProps) {
           <Input
             type="number"
             min={1}
+            step="1"
             value={item.quantity}
             onChange={(e) =>
               updateItem(index, "quantity", Math.max(1, Number(e.target.value)))
