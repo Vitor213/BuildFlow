@@ -22,24 +22,24 @@ import {
 } from "@/components/ui/sidebar";
 
 import {
-  EllipsisVerticalIcon,
   CircleUserRoundIcon,
-  CreditCardIcon,
-  BellIcon,
   LogOutIcon,
+  Settings2Icon,
+  CircleHelpIcon,
+  EllipsisVerticalIcon,
 } from "lucide-react";
 
-export function NavUser({
-  user,
-}: {
+interface NavUserProps {
   user: {
     name: string;
     email: string;
     avatar: string;
   };
-}) {
-  const { isMobile } = useSidebar();
+}
+
+export function NavUser({ user }: NavUserProps) {
   const router = useRouter();
+  const { isMobile } = useSidebar();
 
   function handleLogout() {
     localStorage.removeItem("token");
@@ -50,70 +50,59 @@ export function NavUser({
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <SidebarMenuButton size="lg" className="aria-expanded:bg-muted" />
-            }
-          >
-            <Avatar className="size-8 rounded-lg grayscale">
-              <AvatarImage src={user.avatar} alt={user.name} />
-              <AvatarFallback className="rounded-lg">
-                {(user.name?.charAt(0) ?? "U").toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton size="lg" className="aria-expanded:bg-muted">
+              <Avatar className="size-8 rounded-lg">
+                <AvatarImage src={user.avatar} alt={user.name} />
 
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user.name}</span>
+                <AvatarFallback className="rounded-lg">
+                  {(user.name?.charAt(0) ?? "U").toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
 
-              <span className="truncate text-xs text-foreground/70">
-                {user.email}
-              </span>
-            </div>
+              <div className="grid flex-1 text-left">
+                <span className="truncate font-medium">{user.name}</span>
 
-            <EllipsisVerticalIcon className="ml-auto size-4" />
+                <span className="truncate text-xs text-muted-foreground">
+                  {user.email}
+                </span>
+              </div>
+
+              <EllipsisVerticalIcon className="ml-auto h-4 w-4" />
+            </SidebarMenuButton>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
-            className="min-w-56"
-            side={isMobile ? "bottom" : "right"}
             align="end"
-            sideOffset={4}
+            side={isMobile ? "bottom" : "right"}
+            sideOffset={6}
+            className="w-64"
           >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-2 py-2">
-                <Avatar className="size-8">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback>
-                    {user.name.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-
-                <div className="grid">
-                  <span className="font-medium">{user.name}</span>
-
-                  <span className="text-xs text-muted-foreground">
-                    {user.email}
-                  </span>
-                </div>
+            <DropdownMenuLabel>
+              <div className="flex flex-col">
+                <span>{user.name}</span>
+                <span className="text-xs text-muted-foreground">
+                  {user.email}
+                </span>
               </div>
             </DropdownMenuLabel>
 
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/profile")}>
                 <CircleUserRoundIcon className="mr-2 h-4 w-4" />
                 Perfil
               </DropdownMenuItem>
 
-              <DropdownMenuItem>
-                <CreditCardIcon className="mr-2 h-4 w-4" />
-                Plano
+              <DropdownMenuItem onClick={() => router.push("/settings")}>
+                <Settings2Icon className="mr-2 h-4 w-4" />
+                Configurações
               </DropdownMenuItem>
 
-              <DropdownMenuItem>
-                <BellIcon className="mr-2 h-4 w-4" />
-                Notificações
+              <DropdownMenuItem onClick={() => router.push("/help")}>
+                <CircleHelpIcon className="mr-2 h-4 w-4" />
+                Ajuda
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
