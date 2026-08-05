@@ -75,21 +75,6 @@ const data = {
 
   navSecondary: [
     {
-      title: "Configurações",
-      url: "#",
-      icon: <Settings2Icon />,
-    },
-    {
-      title: "Ajuda",
-      url: "#",
-      icon: <CircleHelpIcon />,
-    },
-    {
-      title: "Sair",
-      url: "#",
-      icon: <LogOutIcon />,
-    },
-    {
       title: "Estoque",
       url: "/stock",
       icon: <Boxes />,
