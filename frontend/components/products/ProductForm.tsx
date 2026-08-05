@@ -28,8 +28,8 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
     () => ({
       name: product?.name ?? "",
       description: product?.description ?? "",
-      price: product?.price ?? 0,
-      quantity: product?.quantity ?? 0,
+      price: product?.price ?? undefined,
+      quantity: product?.quantity ?? undefined,
       categoryId: product?.category.id ?? 0,
     }),
     [product],
@@ -53,30 +53,33 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
       return;
     }
 
-    if (data.price < 0) {
+    const price = Number(data.price);
+    const quantity = Number(data.quantity);
+
+    if (Number.isNaN(price) || price < 0) {
       toast.error("O preço não pode ser negativo.");
       return;
     }
 
-    if (data.quantity < 0) {
+    if (Number.isNaN(quantity) || quantity < 0) {
       toast.error("A quantidade não pode ser negativa.");
       return;
     }
 
     try {
       if (product) {
-        await updateProduct(product.id, data);
+        await updateProduct(product.id, { ...data, price, quantity });
         toast.success("Produto atualizado com sucesso!");
       } else {
-        await createProduct(data);
+        await createProduct({ ...data, price, quantity });
         toast.success("Produto cadastrado com sucesso!");
       }
 
       reset({
         name: "",
         description: "",
-        price: 0,
-        quantity: 0,
+        price: undefined,
+        quantity: undefined,
         categoryId: 0,
       });
 

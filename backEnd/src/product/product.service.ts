@@ -95,7 +95,7 @@ export class ProductService {
       },
 
       orderBy: {
-        id: 'asc',
+        id: 'desc',
       },
     });
   }
