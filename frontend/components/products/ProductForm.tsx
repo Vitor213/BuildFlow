@@ -21,21 +21,30 @@ interface ProductFormProps {
   onSuccess: () => void;
 }
 
+type ProductFormData = {
+  name: string;
+  description?: string;
+  price?: number;
+  quantity?: number;
+  categoryId: number;
+  file?: File;
+};
+
 export function ProductForm({ product, onSuccess }: ProductFormProps) {
   const [categories, setCategories] = useState<Category[]>([]);
 
-  const defaultValues = useMemo<CreateProductDto>(
+  const defaultValues = useMemo<ProductFormData>(
     () => ({
       name: product?.name ?? "",
       description: product?.description ?? "",
-      price: product?.price ?? undefined,
-      quantity: product?.quantity ?? undefined,
+      price: product?.price,
+      quantity: product?.quantity,
       categoryId: product?.category.id ?? 0,
     }),
     [product],
   );
 
-  const { register, handleSubmit, reset } = useForm<CreateProductDto>({
+  const { register, handleSubmit, reset } = useForm<ProductFormData>({
     defaultValues,
   });
 
@@ -47,31 +56,47 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
     reset(defaultValues);
   }, [defaultValues, reset]);
 
-  async function onSubmit(data: CreateProductDto) {
+  async function onSubmit(data: ProductFormData) {
     if (!data.categoryId) {
       toast.error("Selecione uma categoria.");
       return;
     }
 
-    const price = Number(data.price);
-    const quantity = Number(data.quantity);
+    if (data.price === undefined || Number.isNaN(data.price)) {
+      toast.error("Informe um preço.");
+      return;
+    }
 
-    if (Number.isNaN(price) || price < 0) {
+    if (data.quantity === undefined || Number.isNaN(data.quantity)) {
+      toast.error("Informe uma quantidade.");
+      return;
+    }
+
+    if (data.price < 0) {
       toast.error("O preço não pode ser negativo.");
       return;
     }
 
-    if (Number.isNaN(quantity) || quantity < 0) {
+    if (data.quantity < 0) {
       toast.error("A quantidade não pode ser negativa.");
       return;
     }
 
+    const dto: CreateProductDto = {
+      name: data.name,
+      description: data.description,
+      price: data.price,
+      quantity: data.quantity,
+      categoryId: data.categoryId,
+      file: data.file,
+    };
+
     try {
       if (product) {
-        await updateProduct(product.id, { ...data, price, quantity });
+        await updateProduct(product.id, dto);
         toast.success("Produto atualizado com sucesso!");
       } else {
-        await createProduct({ ...data, price, quantity });
+        await createProduct(dto);
         toast.success("Produto cadastrado com sucesso!");
       }
 
