@@ -8,9 +8,15 @@ export interface AuthUser {
 }
 
 export function getUserFromToken(): AuthUser | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
   const token = localStorage.getItem("token");
 
-  if (!token) return null;
+  if (!token) {
+    return null;
+  }
 
   try {
     return jwtDecode<AuthUser>(token);
