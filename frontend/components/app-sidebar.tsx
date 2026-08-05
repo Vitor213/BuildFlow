@@ -1,6 +1,9 @@
 "use client";
 
 import * as React from "react";
+import { useEffect, useState } from "react";
+
+import { getProfile } from "@/lib/services/profile.service";
 
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
@@ -32,12 +35,6 @@ import {
 } from "lucide-react";
 
 const data = {
-  user: {
-    name: "Vitor",
-    email: "vitor@buildflow.com",
-    avatar: "",
-  },
-
   navMain: [
     {
       title: "Dashboard",
@@ -101,6 +98,24 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    avatar: "",
+  });
+
+  useEffect(() => {
+    getProfile()
+      .then((profile) => {
+        setUser({
+          name: profile.name,
+          email: profile.email,
+          avatar: "",
+        });
+      })
+      .catch(console.error);
+  }, []);
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -123,7 +138,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
 
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );
