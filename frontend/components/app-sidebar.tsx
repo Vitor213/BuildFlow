@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
-import { getProfile } from "@/lib/services/profile.service";
+import { getUserFromToken } from "@/lib/services/auth";
 
 import { NavMain } from "@/components/nav-main";
 import { NavSecondary } from "@/components/nav-secondary";
@@ -98,23 +98,13 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    avatar: "",
-  });
+  const decodedUser = useMemo(() => getUserFromToken(), []);
 
-  useEffect(() => {
-    getProfile()
-      .then((profile) => {
-        setUser({
-          name: profile.name,
-          email: profile.email,
-          avatar: "",
-        });
-      })
-      .catch(console.error);
-  }, []);
+  const user = {
+    name: decodedUser?.name ?? "Usuário",
+    email: decodedUser?.email ?? "",
+    avatar: "",
+  };
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
