@@ -48,14 +48,22 @@ export class ProductService {
     const page = query.page ? Number(query.page) : 1;
     const limit = query.limit ? Number(query.limit) : 10;
 
-    const { search, categoryId, minPrice, maxPrice } = query;
+    const { search, categoryId, minPrice, maxPrice, showDeleted } = query;
 
     return this.prisma.product.findMany({
       skip: (page - 1) * limit,
       take: limit,
 
       where: {
-        deletedAt: null,
+        ...(showDeleted
+          ? {
+              deletedAt: {
+                not: null,
+              },
+            }
+          : {
+              deletedAt: null,
+            }),
 
         ...(search && {
           name: {

@@ -7,6 +7,7 @@ export interface Product {
   price: number;
   quantity: number;
   imageUrl?: string;
+  deletedAt?: string | null;
 
   category: {
     id: number;
@@ -30,6 +31,7 @@ export interface GetProductsParams {
   categoryId?: number;
   minPrice?: number;
   maxPrice?: number;
+  showDeleted?: boolean;
 }
 
 export async function getProducts(
@@ -87,5 +89,9 @@ export async function updateProduct(id: number, dto: CreateProductDto) {
 }
 
 export async function deleteProduct(id: number) {
-  await api.delete(`/product/${id}`);
+  return api.delete(`/product/${id}`);
+}
+
+export async function restoreProduct(id: number) {
+  return api.patch(`/product/${id}/restore`);
 }

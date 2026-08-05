@@ -1,7 +1,8 @@
 "use client";
 
 import { Product } from "@/lib/services/product.service";
-import { Pencil, Trash2 } from "lucide-react";
+
+import { Pencil, RotateCcw, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -17,14 +18,19 @@ import {
 interface ProductsTableProps {
   products: Product[];
   loading: boolean;
-  onDelete: (id: number) => void;
-  onEdit: (product: Product) => void;
+  showDeleted: boolean;
+
+  onDelete(id: number): void;
+  onRestore(id: number): void;
+  onEdit(product: Product): void;
 }
 
 export function ProductsTable({
   products,
   loading,
+  showDeleted,
   onDelete,
+  onRestore,
   onEdit,
 }: ProductsTableProps) {
   if (loading) {
@@ -45,7 +51,7 @@ export function ProductsTable({
             <TableHead>Categoria</TableHead>
             <TableHead>Qtd.</TableHead>
             <TableHead>Preço</TableHead>
-            <TableHead className="w-32 text-center">Ações</TableHead>
+            <TableHead className="text-center">Ações</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -74,25 +80,35 @@ export function ProductsTable({
                   })}
                 </TableCell>
 
-                <TableCell className="text-center">
+                <TableCell>
                   <div className="flex justify-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      title="Editar"
-                      onClick={() => onEdit(product)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
+                    {showDeleted ? (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onRestore(product.id)}
+                      >
+                        <RotateCcw className="h-4 w-4 text-green-600" />
+                      </Button>
+                    ) : (
+                      <>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onEdit(product)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
 
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      title="Excluir"
-                      onClick={() => onDelete(product.id)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onDelete(product.id)}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>
