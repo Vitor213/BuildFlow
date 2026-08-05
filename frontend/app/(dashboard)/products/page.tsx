@@ -26,7 +26,7 @@ export default function ProductsPage() {
   async function loadProducts(searchValue = search, deleted = showDeleted) {
     try {
       setLoading(true);
-
+      console.log("showDeleted =", deleted);
       const data = await getProducts({
         search: searchValue,
         showDeleted: deleted,
