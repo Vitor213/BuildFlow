@@ -44,9 +44,9 @@ export class ProductService {
     return product;
   }
 
-  findAll(query: QueryProductDto) {
-    const page = query.page ? Number(query.page) : 1;
-    const limit = query.limit ? Number(query.limit) : 10;
+  async findAll(query: QueryProductDto) {
+    const page = Number(query.page ?? 1);
+    const limit = Number(query.limit ?? 10);
 
     const { search, categoryId, minPrice, maxPrice, showDeleted } = query;
 
@@ -137,9 +137,19 @@ export class ProductService {
   }
 
   async remove(id: number) {
-    await this.findOne(id);
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+    });
 
-    const product = await this.prisma.product.update({
+    if (!product) {
+      throw new NotFoundException('Produto não encontrado');
+    }
+
+    if (product.deletedAt) {
+      return product;
+    }
+
+    const deleted = await this.prisma.product.update({
       where: { id },
       data: {
         deletedAt: new Date(),
@@ -149,11 +159,11 @@ export class ProductService {
     await this.auditService.log({
       action: 'DELETE',
       entity: 'Product',
-      entityId: product.id,
-      description: `Produto ${product.name} removido`,
+      entityId: deleted.id,
+      description: `Produto ${deleted.name} removido`,
     });
 
-    return product;
+    return deleted;
   }
 
   async restore(id: number) {
