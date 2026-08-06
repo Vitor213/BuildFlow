@@ -9,7 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
-
+import { UpdateSaleDto } from '../sale/dto/update-sale.dto';
 @Injectable()
 export class PurchaseService {
   constructor(private readonly prisma: PrismaService) {}
