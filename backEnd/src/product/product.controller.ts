@@ -79,9 +79,6 @@ export class ProductController {
     @Query() query: QueryProductDto,
     @Query('showDeleted') rawShowDeleted?: string,
   ) {
-    console.log('RAW:', rawShowDeleted);
-    console.log('DTO:', query.showDeleted);
-
     return this.productService.findAll({
       ...query,
       showDeleted: rawShowDeleted === 'true',

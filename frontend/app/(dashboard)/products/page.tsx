@@ -32,8 +32,6 @@ export default function ProductsPage() {
         showDeleted: deleted,
       });
 
-      alert(JSON.stringify(data, null, 2));
-
       setProducts(data);
     } catch (error) {
       console.error(error);
