@@ -112,7 +112,9 @@ export class SaleService {
     });
   }
 
-  remove() {
+  remove(id: number) {
+    console.debug(id);
+
     throw new BadRequestException(
       'Vendas não podem ser excluídas para preservar o histórico.',
     );
