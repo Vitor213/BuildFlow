@@ -1,6 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma, StockType } from '@prisma/client';
+
 import { PrismaService } from '../prisma/prisma.service';
+
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
 
@@ -9,11 +15,44 @@ export class PurchaseService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreatePurchaseDto) {
+    const supplier = await this.prisma.supplier.findUnique({
+      where: {
+        id: dto.supplierId,
+      },
+    });
+
+    if (!supplier) {
+      throw new NotFoundException('Fornecedor não encontrado.');
+    }
+
     return this.prisma.$transaction(async (tx) => {
-      const total = dto.items.reduce(
-        (sum, item) => sum + item.quantity * item.price,
-        0,
-      );
+      let total = 0;
+
+      for (const item of dto.items) {
+        const product = await tx.product.findUnique({
+          where: {
+            id: item.productId,
+          },
+        });
+
+        if (!product) {
+          throw new NotFoundException(
+            `Produto ${item.productId} não encontrado.`,
+          );
+        }
+
+        if (item.quantity <= 0) {
+          throw new BadRequestException(
+            'A quantidade deve ser maior que zero.',
+          );
+        }
+
+        if (item.price <= 0) {
+          throw new BadRequestException('O preço deve ser maior que zero.');
+        }
+
+        total += item.quantity * item.price;
+      }
 
       const purchase = await tx.purchase.create({
         data: {
@@ -33,7 +72,9 @@ export class PurchaseService {
         });
 
         await tx.product.update({
-          where: { id: item.productId },
+          where: {
+            id: item.productId,
+          },
           data: {
             quantity: {
               increment: item.quantity,
@@ -46,12 +87,12 @@ export class PurchaseService {
             productId: item.productId,
             quantity: item.quantity,
             type: StockType.ENTRY,
-            reason: 'Compra de fornecedor',
+            reason: `Compra #${purchase.id}`,
           },
         });
       }
 
-      return purchase;
+      return this.findOne(purchase.id);
     });
   }
 
@@ -71,9 +112,11 @@ export class PurchaseService {
     });
   }
 
-  findOne(id: number) {
-    return this.prisma.purchase.findUnique({
-      where: { id },
+  async findOne(id: number) {
+    const purchase = await this.prisma.purchase.findUnique({
+      where: {
+        id,
+      },
       include: {
         supplier: true,
         items: {
@@ -83,20 +126,23 @@ export class PurchaseService {
         },
       },
     });
+
+    if (!purchase) {
+      throw new NotFoundException('Compra não encontrada.');
+    }
+
+    return purchase;
   }
 
   update(id: number, dto: UpdatePurchaseDto) {
-    return this.prisma.purchase.update({
-      where: { id },
-      data: {
-        supplierId: dto.supplierId,
-      },
-    });
+    throw new BadRequestException(
+      'Compras não podem ser editadas após serem concluídas.',
+    );
   }
 
   remove(id: number) {
-    return this.prisma.purchase.delete({
-      where: { id },
-    });
+    throw new BadRequestException(
+      'Compras não podem ser excluídas para preservar o histórico e o estoque.',
+    );
   }
 }

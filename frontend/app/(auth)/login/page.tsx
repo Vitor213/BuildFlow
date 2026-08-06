@@ -1,4 +1,5 @@
 "use client";
+
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -41,7 +42,7 @@ export default function LoginPage() {
     resolver: zodResolver(schema),
   });
 
-  async function onSubmit(data: FormData) {
+  async function handleLogin(data: FormData) {
     try {
       setLoading(true);
 
@@ -54,7 +55,6 @@ export default function LoginPage() {
       router.replace("/dashboard");
     } catch (error) {
       console.error(error);
-
       toast.error("E-mail ou senha inválidos.");
     } finally {
       setLoading(false);
@@ -73,7 +73,7 @@ export default function LoginPage() {
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <form onSubmit={handleSubmit(handleLogin)} className="space-y-5">
             <div>
               <Input placeholder="E-mail" {...register("email")} />
 
@@ -100,6 +100,21 @@ export default function LoginPage() {
 
             <Button className="w-full" disabled={loading} type="submit">
               {loading ? "Entrando..." : "Entrar"}
+            </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              disabled={loading}
+              onClick={() =>
+                handleLogin({
+                  email: "ronaldo@gmail.com",
+                  password: "123456",
+                })
+              }
+            >
+              Entrar como Demonstração
             </Button>
           </form>
         </CardContent>

@@ -83,8 +83,8 @@ export function SaleForm({ onSuccess }: SaleFormProps) {
       return;
     }
 
-    if (items.some((item) => item.price < 0)) {
-      toast.error("O preço não pode ser negativo.");
+    if (items.some((item) => item.price <= 0)) {
+      toast.error("O preço deve ser maior que zero.");
       return;
     }
 

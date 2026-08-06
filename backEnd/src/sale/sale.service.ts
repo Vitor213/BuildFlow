@@ -112,9 +112,9 @@ export class SaleService {
     });
   }
 
-  remove(id: number) {
-    return this.prisma.sale.delete({
-      where: { id },
-    });
+  remove() {
+    throw new BadRequestException(
+      'Vendas não podem ser excluídas para preservar o histórico.',
+    );
   }
 }
