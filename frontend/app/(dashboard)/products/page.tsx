@@ -29,7 +29,6 @@ export default function ProductsPage() {
       console.log("showDeleted =", deleted);
       const data = await getProducts({
         search: searchValue,
-        showDeleted: deleted,
       });
 
       setProducts(data);
