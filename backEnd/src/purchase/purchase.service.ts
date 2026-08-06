@@ -134,15 +134,15 @@ export class PurchaseService {
     return purchase;
   }
 
-  update(id: number, dto: UpdatePurchaseDto) {
+  update(_id: number, _dto: UpdateSaleDto) {
     throw new BadRequestException(
-      'Compras não podem ser editadas após serem concluídas.',
+      'Vendas não podem ser editadas após serem concluídas.',
     );
   }
 
-  remove(id: number) {
+  remove(_id: number) {
     throw new BadRequestException(
-      'Compras não podem ser excluídas para preservar o histórico e o estoque.',
+      'Vendas não podem ser excluídas para preservar o histórico.',
     );
   }
 }
