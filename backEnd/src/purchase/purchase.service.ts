@@ -8,7 +8,6 @@ import { Prisma, StockType } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
-import { UpdatePurchaseDto } from './dto/update-purchase.dto';
 import { UpdateSaleDto } from '../sale/dto/update-sale.dto';
 @Injectable()
 export class PurchaseService {
@@ -134,15 +133,18 @@ export class PurchaseService {
     return purchase;
   }
 
-  update(_id: number, _dto: UpdateSaleDto) {
-    throw new BadRequestException(
-      'Vendas não podem ser editadas após serem concluídas.',
-    );
+  update(id: number, dto: UpdateSaleDto) {
+    return this.prisma.sale.update({
+      where: { id },
+      data: {
+        customerId: dto.customerId,
+      },
+    });
   }
 
-  remove(_id: number) {
-    throw new BadRequestException(
-      'Vendas não podem ser excluídas para preservar o histórico.',
-    );
+  remove(id: number) {
+    return this.prisma.sale.delete({
+      where: { id },
+    });
   }
 }
