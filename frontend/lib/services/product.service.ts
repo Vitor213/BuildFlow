@@ -67,23 +67,7 @@ export async function createProduct(dto: CreateProductDto) {
 }
 
 export async function updateProduct(id: number, dto: CreateProductDto) {
-  const formData = new FormData();
-
-  formData.append("name", dto.name);
-  formData.append("description", dto.description ?? "");
-  formData.append("price", String(dto.price));
-  formData.append("quantity", String(dto.quantity));
-  formData.append("categoryId", String(dto.categoryId));
-
-  if (dto.file) {
-    formData.append("file", dto.file);
-  }
-
-  const { data } = await api.patch<Product>(`/product/${id}`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const { data } = await api.patch<Product>(`/product/${id}`, dto);
 
   return data;
 }
