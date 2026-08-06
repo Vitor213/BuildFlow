@@ -76,6 +76,8 @@ export class ProductController {
 
   @Get()
   findAll(@Query() query: QueryProductDto) {
+    console.log('QUERY:', query);
+    console.log('showDeleted recebido:', query.showDeleted);
     return this.productService.findAll(query);
   }
 
